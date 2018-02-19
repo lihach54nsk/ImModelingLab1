@@ -90,28 +90,33 @@ namespace ImModelingLab1
                 thisStep += step;
             }
         }
+
         //ЗАЩИТА-----------------------------------------------------------------------
         double PI(double lyambda, int i, double[] x) //расчёт P[i]
         {
             return ((lyambda * x[i] - lyambda * x[i - 1]) - ((lyambda * lyambda * x[i] * x[i] / 4) - (lyambda * lyambda * x[i - 1] * x[i - 1] / 4))); //тут в определённый момент становится нечего вычитать(возвращается 0)
         }
 
-        double GrandRandom(double random1, double lyambda, int i, double[] x, int n)
+        double GrandRandom(double random1, double lyambda, double[] x, int n)
         {
             Random r2;
             r2 = new Random();
             double random2;
             double res = 0;
 
-            for (int j = i; j < n; j++)
+            for (int i = 1; i < n; i++)
             {
-                if (random1 <= PI(lyambda, j, x))
+                if (random1 <= PI(lyambda, i, x))
                 {
                     random2 = r2.NextDouble();
-                    res = x[j - 1] + random2 * (x[j] - x[j - 1]);
+                    res = x[i - 1] + random2 * (x[i] - x[i - 1]);
                     Console.WriteLine("Результат: " + res); return res;
                 }
-                else { random1 = random1 - PI(lyambda, j, x); continue; }
+                else
+                {
+                    random1 = random1 - PI(lyambda, i, x);
+                    continue;
+                }
             }
 
             random2 = r2.NextDouble();
@@ -139,21 +144,12 @@ namespace ImModelingLab1
             return xkvadrat;
         }
 
-        double[] Main(int n, double lyambda)
+        double[] GetValuseMain(int n, double lyambda)
         {
             double xMax = 1;
-            int i = 1;
             int j = 0;
-            //int n;
-            //double lyambda;
             Random r1;
             double random1;
-            //double res = 0;
-
-            //Console.WriteLine("Введите n: ");
-           // n = Convert.ToInt32(Console.ReadLine());
-           // Console.WriteLine("Введите лямбда: ");
-           // lyambda = Convert.ToDouble(Console.ReadLine());
 
             double[] resmas = new double[n];
             double[] x = new double[n];
@@ -164,12 +160,12 @@ namespace ImModelingLab1
             x[n - 1] = 1;
 
             r1 = new Random();
-            random1 = r1.NextDouble();
+            
 
-            while (i < n)
+            for (int i=1; i < n; i++)
             {
-                resmas[i] = GrandRandom(random1, lyambda, i, x, n);
-                i++;
+                random1 = r1.NextDouble();
+                resmas[i] = GrandRandom(random1, lyambda, x, n);
             }
 
             resmas[0] = 0;
@@ -198,8 +194,8 @@ namespace ImModelingLab1
     
     private void button2_Click(object sender, EventArgs e)
         {
-            double[] values = Main(Int32.Parse(CountTextBox.Text),Double.Parse(LambdaTextBox.Text));
-            DrawChart(1 / Int32.Parse(CountTextBox.Text), Convert.ToUInt32(values));
+            double[] values = GetValuseMain(Int32.Parse(CountTextBox.Text),Double.Parse(LambdaTextBox.Text));
+            //DrawChart(1 / Int32.Parse(CountTextBox.Text), values);
         }
     }
 }
