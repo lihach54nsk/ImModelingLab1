@@ -92,12 +92,12 @@ namespace ImModelingLab1
         }
 
         //ЗАЩИТА-----------------------------------------------------------------------
-        double PI(double lyambda, int i, double[] x) //расчёт P[i]
+        static double PI(double lyambda, int i, double[] x) //расчёт P[i]
         {
             return ((lyambda * x[i] - lyambda * x[i - 1]) - ((lyambda * lyambda * x[i] * x[i] / 4) - (lyambda * lyambda * x[i - 1] * x[i - 1] / 4))); //тут в определённый момент становится нечего вычитать(возвращается 0)
         }
 
-        double GrandRandom(double random1, double lyambda, double[] x, int n)
+        static double GrandRandom(double random1, double lyambda, double[] x, int n)
         {
             Random r2;
             r2 = new Random();
@@ -144,10 +144,9 @@ namespace ImModelingLab1
             return xkvadrat;
         }
 
-        double[] GetValuseMain(int n, double lyambda)
+        double[] GetValuesMain(double lambda, int n)
         {
             double xMax = 1;
-            int j = 0;
             Random r1;
             double random1;
 
@@ -165,7 +164,7 @@ namespace ImModelingLab1
             for (int i=1; i < n; i++)
             {
                 random1 = r1.NextDouble();
-                resmas[i] = GrandRandom(random1, lyambda, x, n);
+                resmas[i] = GrandRandom(random1, lambda, x, n);
             }
 
             resmas[0] = 0;
@@ -175,7 +174,7 @@ namespace ImModelingLab1
             int a = 0;
             int b = n - 1;
 
-            while (a != b || b > a)
+            while (b > a)
             {
                 double t;
                 t = resmas[a];
@@ -184,18 +183,14 @@ namespace ImModelingLab1
                 a++; b--;
             }
 
-            int k = 0;
-            while (k < resmas.Length) { Console.WriteLine("Массив: :" + resmas[k]); k++; Console.WriteLine("\n"); }
-
-            Console.ReadLine();
-
             return resmas;
         }
-    
-    private void button2_Click(object sender, EventArgs e)
+
+        private void button2_Click(object sender, EventArgs e)
         {
-            double[] values = GetValuseMain(Int32.Parse(CountTextBox.Text),Double.Parse(LambdaTextBox.Text));
-            //DrawChart(1 / Int32.Parse(CountTextBox.Text), values);
+            double[] values = GetValuesMain(double.Parse(LambdaTextBox.Text), int.Parse(CountTextBox.Text));
+            Tuple<double, uint[]> tulpe = CalculateRow(values, outputCount);
+            DrawChart(tulpe.Item1, tulpe.Item2);
         }
     }
 }
